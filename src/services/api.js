@@ -24,10 +24,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const token = localStorage.getItem('accessToken');
+      
+      // Only redirect if user WAS authenticated (token expired)
+      // Don't redirect during login attempt (no token)
+      if (token) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

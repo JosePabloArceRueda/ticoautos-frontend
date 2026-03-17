@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
@@ -12,6 +12,7 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const errorTimerRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +20,11 @@ export const Login = () => {
       ...prev,
       [name]: value,
     }));
+
+    if (error) {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+      setError('');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -31,9 +37,12 @@ export const Login = () => {
       login(response.data.user, response.data.accessToken);
       navigate('/');
     } catch (err) {
-      setError('Credenciales inválidas. Intenta de nuevo.');
-    } finally {
       setLoading(false);
+      setError('Credenciales inválidas. Intenta de nuevo.');
+
+      errorTimerRef.current = setTimeout(() => {
+        window.location.reload();
+      }, 800);
     }
   };
 
@@ -43,7 +52,7 @@ export const Login = () => {
         <h1 className="text-3xl font-bold mb-6 text-center">Iniciar sesión</h1>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded border border-red-400 font-semibold">
             {error}
           </div>
         )}
@@ -57,22 +66,22 @@ export const Login = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               placeholder="tu@email.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Contraseña
-            </label>
+            <label className="block text-sm font-medium mb-1">Contraseña</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               placeholder="Tu contraseña"
             />
           </div>
