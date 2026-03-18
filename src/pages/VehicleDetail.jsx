@@ -52,7 +52,7 @@ export const VehicleDetail = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600">Loading vehicle...</p>
+        <p className="text-gray-600">Cargando vehículo...</p>
       </div>
     );
   }
@@ -61,12 +61,12 @@ export const VehicleDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Vehicle not found'}</p>
+          <p className="text-red-600 mb-4">{error || 'Vehículo no encontrado'}</p>
           <button
             onClick={() => navigate('/')}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Back to home
+            Volver al inicio
           </button>
         </div>
       </div>
@@ -82,7 +82,7 @@ export const VehicleDetail = () => {
             onClick={() => navigate('/')}
             className="text-blue-500 hover:text-blue-700 mb-4"
           >
-            ← Back
+            ← Volver
           </button>
           <h1 className="text-4xl font-bold">
             {vehicle.brand} {vehicle.model}
@@ -112,7 +112,7 @@ export const VehicleDetail = () => {
           <div className="bg-white p-6 rounded-lg shadow h-fit">
             {/* Price */}
             <div className="mb-6">
-              <p className="text-gray-600 text-sm mb-1">Price</p>
+              <p className="text-gray-600 text-sm mb-1">Precio</p>
               <p className="text-4xl font-bold text-blue-600">
                 {formatPrice(vehicle.price)}
               </p>
@@ -121,12 +121,12 @@ export const VehicleDetail = () => {
             {/* Vehicle Details */}
             <div className="space-y-4 mb-6 border-b pb-6">
               <div>
-                <p className="text-gray-600 text-sm">Year</p>
+                <p className="text-gray-600 text-sm">Año</p>
                 <p className="text-lg font-semibold">{vehicle.year}</p>
               </div>
 
               <div>
-                <p className="text-gray-600 text-sm">Status</p>
+                <p className="text-gray-600 text-sm">Estado</p>
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
                     vehicle.status === 'AVAILABLE'
@@ -134,12 +134,12 @@ export const VehicleDetail = () => {
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {vehicle.status === 'AVAILABLE' ? 'Available' : 'Sold'}
+                  {vehicle.status === 'AVAILABLE' ? 'Disponible' : 'Vendido'}
                 </span>
               </div>
 
               <div>
-                <p className="text-gray-600 text-sm">Owner</p>
+                <p className="text-gray-600 text-sm">Propietario</p>
                 <p className="text-lg font-semibold">{vehicle.owner?.name}</p>
               </div>
             </div>
@@ -152,13 +152,13 @@ export const VehicleDetail = () => {
                     onClick={() => navigate(`/dashboard/vehicles/${vehicle._id}/edit`)}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
                   >
-                    Edit vehicle
+                    Editar vehículo
                   </button>
                   <button
                     onClick={() => navigate('/dashboard')}
                     className="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold transition"
                   >
-                    My vehicles
+                    Mis vehículos
                   </button>
                 </>
               ) : (
@@ -170,7 +170,7 @@ export const VehicleDetail = () => {
                       onClick={() => navigate('/login')}
                       className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
                     >
-                      Sign in to ask
+                      Iniciar sesión para preguntar
                     </button>
                   )}
                 </>
