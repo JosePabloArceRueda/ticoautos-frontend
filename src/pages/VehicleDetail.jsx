@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { ChatButton } from '../components/ChatButton';
+import { ImageGallery } from '../components/ImageGallery';
 
 export const VehicleDetail = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export const VehicleDetail = () => {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
+  // Fetch vehicle data
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
@@ -20,7 +22,7 @@ export const VehicleDetail = () => {
         setVehicle(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar el vehículo');
+        setError('Error loading vehicle');
         setLoading(false);
       }
     };
@@ -28,6 +30,7 @@ export const VehicleDetail = () => {
     fetchVehicle();
   }, [id]);
 
+  // Handle copy link to clipboard
   const handleCopyLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
@@ -35,6 +38,7 @@ export const VehicleDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Format price in Costa Rican currency
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CR', {
       style: 'currency',
@@ -42,12 +46,13 @@ export const VehicleDetail = () => {
     }).format(price);
   };
 
+  // Check if current user is the vehicle owner
   const isOwner = isAuthenticated && user?.id === vehicle?.owner?._id;
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600">Cargando vehículo...</p>
+        <p className="text-gray-600">Loading vehicle...</p>
       </div>
     );
   }
@@ -56,12 +61,12 @@ export const VehicleDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Vehículo no encontrado'}</p>
+          <p className="text-red-600 mb-4">{error || 'Vehicle not found'}</p>
           <button
             onClick={() => navigate('/')}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Volver al inicio
+            Back to home
           </button>
         </div>
       </div>
@@ -77,7 +82,7 @@ export const VehicleDetail = () => {
             onClick={() => navigate('/')}
             className="text-blue-500 hover:text-blue-700 mb-4"
           >
-            ← Volver
+            ← Back
           </button>
           <h1 className="text-4xl font-bold">
             {vehicle.brand} {vehicle.model}
@@ -87,30 +92,41 @@ export const VehicleDetail = () => {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Image */}
+          {/* Image Gallery */}
           <div className="md:col-span-2">
-            <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
-              <span className="text-gray-500 text-xl">Imagen del vehículo</span>
-            </div>
+            {vehicle.images && vehicle.images.length > 0 ? (
+              <ImageGallery
+                vehicleId={vehicle._id}
+                images={vehicle.images}
+                onImageDelete={() => {}}
+                isOwner={false}
+              />
+            ) : (
+              <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
+                <span className="text-gray-500 text-xl">No images available</span>
+              </div>
+            )}
           </div>
 
-          {/* vehicle information */}
-          <div className="bg-white p-6 rounded-lg shadow">
+          {/* Vehicle Information */}
+          <div className="bg-white p-6 rounded-lg shadow h-fit">
+            {/* Price */}
             <div className="mb-6">
-              <p className="text-gray-600 text-sm mb-1">Precio</p>
+              <p className="text-gray-600 text-sm mb-1">Price</p>
               <p className="text-4xl font-bold text-blue-600">
                 {formatPrice(vehicle.price)}
               </p>
             </div>
 
+            {/* Vehicle Details */}
             <div className="space-y-4 mb-6 border-b pb-6">
               <div>
-                <p className="text-gray-600 text-sm">Año</p>
+                <p className="text-gray-600 text-sm">Year</p>
                 <p className="text-lg font-semibold">{vehicle.year}</p>
               </div>
 
               <div>
-                <p className="text-gray-600 text-sm">Estado</p>
+                <p className="text-gray-600 text-sm">Status</p>
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
                     vehicle.status === 'AVAILABLE'
@@ -118,31 +134,31 @@ export const VehicleDetail = () => {
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {vehicle.status === 'AVAILABLE' ? 'Disponible' : 'Vendido'}
+                  {vehicle.status === 'AVAILABLE' ? 'Available' : 'Sold'}
                 </span>
               </div>
 
               <div>
-                <p className="text-gray-600 text-sm">Propietario</p>
+                <p className="text-gray-600 text-sm">Owner</p>
                 <p className="text-lg font-semibold">{vehicle.owner?.name}</p>
               </div>
             </div>
 
-            {/* Action buttons */}
+            {/* Action Buttons */}
             <div className="space-y-3">
               {isOwner ? (
                 <>
                   <button
                     onClick={() => navigate(`/dashboard/vehicles/${vehicle._id}/edit`)}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold"
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
                   >
-                    Editar vehículo
+                    Edit vehicle
                   </button>
                   <button
-                    onClick={() => navigate('/dashboard/vehicles')}
-                    className="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold"
+                    onClick={() => navigate('/dashboard')}
+                    className="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold transition"
                   >
-                    Mis vehículos
+                    My vehicles
                   </button>
                 </>
               ) : (
@@ -152,9 +168,9 @@ export const VehicleDetail = () => {
                   ) : (
                     <button
                       onClick={() => navigate('/login')}
-                      className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold"
+                      className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
                     >
-                      Inicia sesión para preguntar
+                      Sign in to ask
                     </button>
                   )}
                 </>
