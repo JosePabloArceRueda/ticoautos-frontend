@@ -34,7 +34,9 @@ export const Navbar = () => {
                 📋 Dashboard
               </Link>
               <div className="flex items-center gap-2">
-                <span className="text-sm">{user?.name}</span>
+                <Link to="/profile" className="text-sm hover:text-blue-100 transition">
+                  {user?.name}
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="px-3 py-1 bg-red-500 rounded hover:bg-red-600 transition"

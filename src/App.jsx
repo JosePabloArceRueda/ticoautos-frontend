@@ -17,6 +17,7 @@ import { CheckEmail } from './pages/CheckEmail';
 import { VerifyEmail } from './pages/VerifyEmail';
 import { OAuthCallback } from './pages/OAuthCallback';
 import { GoogleCompleteRegistration } from './pages/GoogleCompleteRegistration';
+import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -33,6 +34,14 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="/register/complete" element={<GoogleCompleteRegistration />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           <Route
             path="/vehicles/:vehicleId/chat/new"
