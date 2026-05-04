@@ -15,6 +15,8 @@ import { DeleteVehicleConfirm } from './pages/DeleteVehicleConfirm';
 import { VerifyTwoFactor } from './pages/VerifyTwoFactor';
 import { CheckEmail } from './pages/CheckEmail';
 import { VerifyEmail } from './pages/VerifyEmail';
+import { OAuthCallback } from './pages/OAuthCallback';
+import { GoogleCompleteRegistration } from './pages/GoogleCompleteRegistration';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
           <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/oauth/callback" element={<OAuthCallback />} />
+          <Route path="/register/complete" element={<GoogleCompleteRegistration />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           <Route
             path="/vehicles/:vehicleId/chat/new"
