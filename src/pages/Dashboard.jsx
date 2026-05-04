@@ -142,7 +142,7 @@ export const Dashboard = () => {
                     <div className="flex gap-8 ml-6">
                       <button
                         onClick={() => navigate(`/dashboard/vehicles/${vehicle._id}/edit`)}
-                        className="px-2000 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold transition"
+                        className="px-8 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold transition"
                       >
                         Edit
                       </button>

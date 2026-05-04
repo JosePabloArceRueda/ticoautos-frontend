@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
@@ -11,8 +11,12 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const errorTimerRef = useRef(null);
+
+  useEffect(() => {
+    if (isAuthenticated) navigate('/');
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,15 +38,26 @@ export const Login = () => {
 
     try {
       const response = await api.post('/api/auth/login', formData);
+
+      if (response.data.requiresTwoFactor) {
+        sessionStorage.setItem('tempToken', response.data.tempToken);
+        navigate('/verify-2fa');
+        return;
+      }
+
       login(response.data.user, response.data.accessToken);
       navigate('/');
     } catch (err) {
       setLoading(false);
-      setError('Credenciales inválidas. Intenta de nuevo.');
-
-      errorTimerRef.current = setTimeout(() => {
-        window.location.reload();
-      }, 800);
+      const status = err.response?.status;
+      if (status === 403) {
+        setError('Debés verificar tu correo antes de ingresar.');
+      } else {
+        setError('Credenciales inválidas. Intenta de nuevo.');
+        errorTimerRef.current = setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      }
     }
   };
 

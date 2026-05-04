@@ -12,6 +12,7 @@ import { ChatsList } from './pages/ChatsList';
 import { Dashboard } from './pages/Dashboard';
 import { VehicleForm } from './pages/VehicleForm';
 import { DeleteVehicleConfirm } from './pages/DeleteVehicleConfirm';
+import { VerifyTwoFactor } from './pages/VerifyTwoFactor';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           <Route
             path="/vehicles/:vehicleId/chat/new"
