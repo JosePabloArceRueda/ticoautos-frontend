@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
+import { GET_CHAT_MESSAGES } from '../graphql/queries';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { AiErrorBanner } from '../components/AiErrorBanner';
@@ -8,44 +10,40 @@ export const ChatDetail = () => {
   const { chatId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Chat metadata (vehicle, participants) — loaded once via REST
   const [chat, setChat] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [metaLoading, setMetaLoading] = useState(true);
+  const [metaError, setMetaError] = useState('');
+
+  // Message sending state
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [aiError, setAiError] = useState('');
   const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // Load chat metadata once via REST
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    const fetchChat = async () => {
-      try {
-        const response = await api.get(
-          `/api/chats/${chatId}/messages?page=1&limit=50`
-        );
-        setChat(response.data.chat);
-        setMessages(response.data.messages);
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar el chat');
-        setLoading(false);
-      }
-    };
-
-    fetchChat();
-
-    // Poll for new messages every 3 seconds
-    const interval = setInterval(fetchChat, 3000);
-    return () => clearInterval(interval);
+    api
+      .get(`/api/chats/${chatId}/messages?page=1&limit=1`)
+      .then((res) => setChat(res.data.chat))
+      .catch(() => setMetaError('Error al cargar el chat'))
+      .finally(() => setMetaLoading(false));
   }, [chatId]);
+
+  // Poll messages via GraphQL every 3 seconds
+  const { data, loading: messagesLoading } = useQuery(GET_CHAT_MESSAGES, {
+    variables: { chatId, page: 1, limit: 50 },
+    pollInterval: 3000,
+    skip: !chat,
+  });
+
+  const messages = data?.chatMessages?.data || [];
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -56,18 +54,13 @@ export const ChatDetail = () => {
     setAiError('');
 
     try {
-      const response = await api.post(`/api/chats/${chatId}/message`, {
-        text: newMessage,
-      });
-
-      setMessages((prev) => [...prev, response.data]);
+      await api.post(`/api/chats/${chatId}/message`, { text: newMessage });
       setNewMessage('');
     } catch (err) {
       const status = err.response?.status;
       const data = err.response?.data;
 
       if (status === 422 && data?.message) {
-        // AI validation error — show message, keep input intact
         setAiError(data.message);
       } else if (status === 422) {
         setError('Esperá la respuesta del otro usuario antes de enviar otro mensaje.');
@@ -81,7 +74,7 @@ export const ChatDetail = () => {
     }
   };
 
-  if (loading) {
+  if (metaLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-gray-600">Cargando chat...</p>
@@ -89,15 +82,12 @@ export const ChatDetail = () => {
     );
   }
 
-  if (error && !chat) {
+  if (metaError || !chat) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button
-            onClick={() => navigate('/chats')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
+          <p className="text-red-600 mb-4">{metaError}</p>
+          <button onClick={() => navigate('/chats')} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Volver a chats
           </button>
         </div>
@@ -105,11 +95,12 @@ export const ChatDetail = () => {
     );
   }
 
-  const otherUser =
-    user.id === chat.interested._id ? chat.owner : chat.interested;
-  const isInterested = user.id === chat.interested._id;
+  const userId = user?.id || user?._id;
+  const otherUser = userId === (chat.interested._id || chat.interested.id) ? chat.owner : chat.interested;
+  const isInterested = userId === (chat.interested._id || chat.interested.id);
+
   const lastMessageFromOther = messages.length > 0
-    ? messages[messages.length - 1].sender._id !== user.id
+    ? messages[messages.length - 1].sender.id !== userId
     : false;
 
   return (
@@ -118,27 +109,15 @@ export const ChatDetail = () => {
       <div className="bg-white shadow sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <button
-              onClick={() => navigate('/chats')}
-              className="text-blue-500 hover:text-blue-700 mb-2"
-            >
+            <button onClick={() => navigate('/chats')} className="text-blue-500 hover:text-blue-700 mb-2">
               ← Volver a chats
             </button>
-            <h1 className="text-2xl font-bold">
-              {chat.vehicle.brand} {chat.vehicle.model}
-            </h1>
-            <p className="text-gray-600 text-sm">
-              Conversación con {otherUser.name}
-            </p>
+            <h1 className="text-2xl font-bold">{chat.vehicle.brand} {chat.vehicle.model}</h1>
+            <p className="text-gray-600 text-sm">Conversación con {otherUser.name}</p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-semibold">
-              {isInterested ? 'Interesado' : 'Propietario'}
-            </p>
-            <a
-              href={`/vehicles/${chat.vehicle._id}`}
-              className="text-blue-500 hover:underline text-sm"
-            >
+            <p className="text-sm font-semibold">{isInterested ? 'Interesado' : 'Propietario'}</p>
+            <a href={`/vehicles/${chat.vehicle._id || chat.vehicle.id}`} className="text-blue-500 hover:underline text-sm">
               Ver vehículo
             </a>
           </div>
@@ -147,7 +126,11 @@ export const ChatDetail = () => {
 
       {/* Mensajes */}
       <div className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-8">
-        {messages.length === 0 ? (
+        {messagesLoading && messages.length === 0 ? (
+          <div className="flex justify-center items-center h-full">
+            <p className="text-gray-600">Cargando mensajes...</p>
+          </div>
+        ) : messages.length === 0 ? (
           <div className="flex justify-center items-center h-full">
             <p className="text-gray-600">Aún no hay mensajes</p>
           </div>
@@ -155,30 +138,15 @@ export const ChatDetail = () => {
           <div className="space-y-4">
             {messages.map((message) => (
               <div
-                key={message._id}
-                className={`flex ${
-                  message.sender._id === user.id ? 'justify-end' : 'justify-start'
-                }`}
+                key={message.id}
+                className={`flex ${message.sender.id === userId ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.sender._id === user.id
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-900'
-                  }`}
-                >
+                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  message.sender.id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-900'
+                }`}>
                   <p className="text-sm">{message.text}</p>
-                  <p
-                    className={`text-xs mt-1 ${
-                      message.sender._id === user.id
-                        ? 'text-blue-100'
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    {new Date(message.createdAt).toLocaleTimeString('es-CR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                  <p className={`text-xs mt-1 ${message.sender.id === userId ? 'text-blue-100' : 'text-gray-600'}`}>
+                    {new Date(message.createdAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
@@ -188,11 +156,9 @@ export const ChatDetail = () => {
         )}
       </div>
 
-      {/* Error */}
+      {/* Error de turno */}
       {error && (
-        <div className="bg-red-100 text-red-700 p-4 text-center">
-          {error}
-        </div>
+        <div className="bg-red-100 text-red-700 p-4 text-center">{error}</div>
       )}
 
       {/* Input de mensaje */}
@@ -202,9 +168,7 @@ export const ChatDetail = () => {
 
           {!lastMessageFromOther && messages.length > 0 && (
             <p className="text-sm text-gray-600 mb-3">
-              {isInterested
-                ? 'Esperando respuesta del propietario...'
-                : 'Esperando respuesta del interesado...'}
+              {isInterested ? 'Esperando respuesta del propietario...' : 'Esperando respuesta del interesado...'}
             </p>
           )}
 
@@ -220,20 +184,14 @@ export const ChatDetail = () => {
             />
             <button
               type="submit"
-              disabled={
-                sending ||
-                !newMessage.trim() ||
-                (!lastMessageFromOther && messages.length > 0)
-              }
+              disabled={sending || !newMessage.trim() || (!lastMessageFromOther && messages.length > 0)}
               className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold disabled:opacity-50"
             >
               {sending ? 'Enviando...' : 'Enviar'}
             </button>
           </form>
 
-          <p className="text-xs text-gray-600 mt-2">
-            {newMessage.length}/500 caracteres
-          </p>
+          <p className="text-xs text-gray-600 mt-2">{newMessage.length}/500 caracteres</p>
         </div>
       </div>
     </div>

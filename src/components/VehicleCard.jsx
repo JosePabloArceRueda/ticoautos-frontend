@@ -17,7 +17,7 @@ export const VehicleCard = ({ vehicle }) => {
 
   return (
     <Link
-      to={`/vehicles/${vehicle._id}`}
+      to={`/vehicles/${vehicle.id || vehicle._id}`}
       className="bg-white rounded-lg shadow hover:shadow-lg transition transform hover:scale-105 overflow-hidden"
     >
       {/* Vehicle Image */}

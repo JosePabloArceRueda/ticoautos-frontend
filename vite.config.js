@@ -7,4 +7,7 @@ export default defineConfig({
   server: {
     host: true,
   },
+  optimizeDeps: {
+    include: ['@apollo/client', '@apollo/client/react', 'graphql'],
+  },
 })
