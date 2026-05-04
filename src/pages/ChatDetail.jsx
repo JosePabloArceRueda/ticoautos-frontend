@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { AiErrorBanner } from '../components/AiErrorBanner';
 
 export const ChatDetail = () => {
   const { chatId } = useParams();
@@ -13,6 +14,7 @@ export const ChatDetail = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const [aiError, setAiError] = useState('');
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -51,6 +53,7 @@ export const ChatDetail = () => {
 
     setSending(true);
     setError('');
+    setAiError('');
 
     try {
       const response = await api.post(`/api/chats/${chatId}/message`, {
@@ -60,12 +63,18 @@ export const ChatDetail = () => {
       setMessages((prev) => [...prev, response.data]);
       setNewMessage('');
     } catch (err) {
-      if (err.response?.status === 422) {
-        setError('Debe responder el otro participante antes de enviar otro mensaje');
-      } else if (err.response?.status === 403) {
-        setError('No tienes permiso para escribir en este chat');
+      const status = err.response?.status;
+      const data = err.response?.data;
+
+      if (status === 422 && data?.message) {
+        // AI validation error — show message, keep input intact
+        setAiError(data.message);
+      } else if (status === 422) {
+        setError('Esperá la respuesta del otro usuario antes de enviar otro mensaje.');
+      } else if (status === 403) {
+        setError('No tenés permiso para escribir en este chat.');
       } else {
-        setError('Error al enviar el mensaje');
+        setError('Error al enviar el mensaje.');
       }
     } finally {
       setSending(false);
@@ -189,6 +198,8 @@ export const ChatDetail = () => {
       {/* Input de mensaje */}
       <div className="bg-white border-t sticky bottom-0">
         <div className="max-w-4xl mx-auto px-4 py-4">
+          <AiErrorBanner message={aiError} onClose={() => setAiError('')} />
+
           {!lastMessageFromOther && messages.length > 0 && (
             <p className="text-sm text-gray-600 mb-3">
               {isInterested

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { AiErrorBanner } from '../components/AiErrorBanner';
 
 export const StartChat = () => {
   const { vehicleId } = useParams();
@@ -8,10 +9,12 @@ export const StartChat = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [aiError, setAiError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setAiError('');
     setLoading(true);
 
     try {
@@ -19,16 +22,19 @@ export const StartChat = () => {
         `/api/vehicles/${vehicleId}/chat`,
         { text: message }
       );
-
-      // Redirect to chat
       navigate(`/chats/${response.data.chatId}`);
     } catch (err) {
-      if (err.response?.status === 403) {
-        setError('No puedes enviar mensajes sobre tus propios vehículos');
-      } else if (err.response?.status === 404) {
-        setError('Vehículo no encontrado');
+      const status = err.response?.status;
+      const data = err.response?.data;
+
+      if (status === 422 && data?.message) {
+        setAiError(data.message);
+      } else if (status === 403) {
+        setError('No podés enviar mensajes sobre tus propios vehículos.');
+      } else if (status === 404) {
+        setError('Vehículo no encontrado.');
       } else {
-        setError('Error al enviar el mensaje');
+        setError('Error al enviar el mensaje.');
       }
     } finally {
       setLoading(false);
@@ -53,6 +59,8 @@ export const StartChat = () => {
               {error}
             </div>
           )}
+
+          <AiErrorBanner message={aiError} onClose={() => setAiError('')} />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
