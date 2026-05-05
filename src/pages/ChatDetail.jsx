@@ -5,6 +5,7 @@ import { GET_CHAT_MESSAGES } from '../graphql/queries';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { AiErrorBanner } from '../components/AiErrorBanner';
+import { formatTime } from '../utils/date';
 
 export const ChatDetail = () => {
   const { chatId } = useParams();
@@ -125,7 +126,7 @@ export const ChatDetail = () => {
       </div>
 
       {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-8">
+      <div className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-6">
         {messagesLoading && messages.length === 0 ? (
           <div className="flex justify-center items-center h-full">
             <p className="text-gray-600">Cargando mensajes...</p>
@@ -135,18 +136,18 @@ export const ChatDetail = () => {
             <p className="text-gray-600">Aún no hay mensajes</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender.id === userId ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  message.sender.id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-900'
+                <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                  message.sender.id === userId ? 'bg-blue-500 text-white' : 'bg-white text-gray-900 border border-gray-200'
                 }`}>
                   <p className="text-sm">{message.text}</p>
                   <p className={`text-xs mt-1 ${message.sender.id === userId ? 'text-blue-100' : 'text-gray-600'}`}>
-                    {new Date(message.createdAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
+                    {formatTime(message.createdAt)}
                   </p>
                 </div>
               </div>
@@ -180,12 +181,12 @@ export const ChatDetail = () => {
               placeholder="Escribe tu mensaje..."
               maxLength={500}
               disabled={sending || (!lastMessageFromOther && messages.length > 0)}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={sending || !newMessage.trim() || (!lastMessageFromOther && messages.length > 0)}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold disabled:opacity-50"
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-base disabled:opacity-50"
             >
               {sending ? 'Enviando...' : 'Enviar'}
             </button>

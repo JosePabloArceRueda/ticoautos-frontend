@@ -33,7 +33,7 @@ export const VehicleForm = () => {
           setImages(response.data.images || []);
           setFetching(false);
         } catch (err) {
-          setError('Error loading vehicle');
+          setError('Error al cargar el vehículo.');
           setFetching(false);
         }
       };
@@ -61,17 +61,16 @@ export const VehicleForm = () => {
       if (isEditMode) {
         // Update existing vehicle
         await api.put(`/api/vehicles/${id}`, formData);
-        setSuccess('Vehicle updated successfully');
+        setSuccess('Vehículo actualizado correctamente.');
         setTimeout(() => navigate('/dashboard'), 2000);
       } else {
-        // Create new vehicle
         const response = await api.post('/api/vehicles', formData);
-        setSuccess('Vehicle created successfully');
+        setSuccess('Vehículo creado correctamente.');
         // Redirect to edit page so user can upload images
         setTimeout(() => navigate(`/dashboard/vehicles/${response.data._id}/edit`), 2000);
       }
     } catch (err) {
-      setError('Error saving vehicle');
+      setError('Error al guardar el vehículo.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -81,7 +80,7 @@ export const VehicleForm = () => {
   if (fetching) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600">Loading vehicle...</p>
+        <p className="text-gray-600">Cargando vehículo...</p>
       </div>
     );
   }
@@ -97,10 +96,10 @@ export const VehicleForm = () => {
             onClick={() => navigate('/dashboard')}
             className="text-blue-500 hover:text-blue-700 mb-4"
           >
-            ← Back to dashboard
+            ← Volver al dashboard
           </button>
           <h1 className="text-4xl font-bold">
-            {isEditMode ? 'Edit vehicle' : 'Create new vehicle'}
+            {isEditMode ? 'Editar vehículo' : 'Nuevo vehículo'}
           </h1>
         </div>
       </div>
@@ -125,7 +124,7 @@ export const VehicleForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Brand *
+                  Marca *
                 </label>
                 <input
                   type="text"
@@ -133,14 +132,14 @@ export const VehicleForm = () => {
                   value={formData.brand}
                   onChange={handleChange}
                   required
-                  placeholder="e.g., Toyota"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="ej. Toyota"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Model *
+                  Modelo *
                 </label>
                 <input
                   type="text"
@@ -148,8 +147,8 @@ export const VehicleForm = () => {
                   value={formData.model}
                   onChange={handleChange}
                   required
-                  placeholder="e.g., Corolla"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="ej. Corolla"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -158,7 +157,7 @@ export const VehicleForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Year *
+                  Año *
                 </label>
                 <input
                   type="number"
@@ -168,13 +167,13 @@ export const VehicleForm = () => {
                   required
                   min="1900"
                   max={currentYear + 1}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Price (₡) *
+                  Precio (₡) *
                 </label>
                 <input
                   type="number"
@@ -185,7 +184,7 @@ export const VehicleForm = () => {
                   min="0"
                   step="0.01"
                   placeholder="0.00"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -193,31 +192,31 @@ export const VehicleForm = () => {
             {/* Description */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Description
+                Descripción
               </label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows="5"
-                placeholder="Describe your vehicle..."
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Describí tu vehículo..."
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Status */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Status
+                Estado
               </label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="AVAILABLE">Available</option>
-                <option value="SOLD">Sold</option>
+                <option value="AVAILABLE">Disponible</option>
+                <option value="SOLD">Vendido</option>
               </select>
             </div>
 
@@ -225,9 +224,9 @@ export const VehicleForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold disabled:opacity-50"
+              className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-base disabled:opacity-50"
             >
-              {loading ? 'Saving...' : isEditMode ? 'Update Vehicle' : 'Create Vehicle'}
+              {loading ? 'Guardando...' : isEditMode ? 'Actualizar vehículo' : 'Crear vehículo'}
             </button>
           </form>
         </div>
@@ -237,7 +236,7 @@ export const VehicleForm = () => {
           <div className="mt-8 space-y-6">
             {/* Image Upload */}
             <div className="bg-white p-8 rounded-lg shadow">
-              <h2 className="text-2xl font-bold mb-6">Upload Images</h2>
+              <h2 className="text-2xl font-bold mb-6">Subir imágenes</h2>
               <ImageUpload 
                 vehicleId={id}
                 onImagesUpload={setImages}
@@ -247,7 +246,7 @@ export const VehicleForm = () => {
             {/* Image Gallery */}
             {images.length > 0 && (
               <div className="bg-white p-8 rounded-lg shadow">
-                <h2 className="text-2xl font-bold mb-6">Current Gallery ({images.length} images)</h2>
+                <h2 className="text-2xl font-bold mb-6">Galería actual ({images.length} foto(s))</h2>
                 <ImageGallery
                   vehicleId={id}
                   images={images}

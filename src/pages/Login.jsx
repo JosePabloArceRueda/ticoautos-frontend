@@ -96,7 +96,7 @@ export const Login = () => {
               onChange={handleChange}
               required
               disabled={loading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               placeholder="tu@email.com"
             />
           </div>
@@ -110,7 +110,7 @@ export const Login = () => {
               onChange={handleChange}
               required
               disabled={loading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               placeholder="Tu contraseña"
             />
           </div>
@@ -118,7 +118,7 @@ export const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold text-base hover:bg-blue-600 disabled:opacity-50"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
@@ -132,7 +132,7 @@ export const Login = () => {
 
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-lg font-semibold text-base hover:bg-gray-50 transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

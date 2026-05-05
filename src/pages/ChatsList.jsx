@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import { GET_CHATS_AS_INTERESTED, GET_CHATS_AS_OWNER } from '../graphql/queries';
+import { formatDateTime } from '../utils/date';
 
 export const ChatsList = () => {
   const navigate = useNavigate();
@@ -30,10 +31,6 @@ export const ChatsList = () => {
   const formatPrice = (price) =>
     new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(price);
 
-  const formatDate = (date) =>
-    new Date(date).toLocaleDateString('es-CR', {
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-    });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -105,7 +102,7 @@ export const ChatsList = () => {
                         <span className="font-semibold">{chat.lastMessage.sender.name}:</span>{' '}
                         {chat.lastMessage.text}
                       </p>
-                      <p className="text-xs text-gray-600 mt-1">{formatDate(chat.lastMessage.createdAt)}</p>
+                      <p className="text-xs text-gray-600 mt-1">{formatDateTime(chat.lastMessage.createdAt)}</p>
                     </>
                   ) : (
                     <p className="text-sm text-gray-600 italic">No hay mensajes aún</p>

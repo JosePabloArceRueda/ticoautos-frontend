@@ -74,7 +74,7 @@ export const StartChat = () => {
                 minLength={1}
                 maxLength={500}
                 rows={6}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="¿Tienes alguna pregunta sobre el vehículo?"
               />
               <p className="text-sm text-gray-600 mt-1">
@@ -86,7 +86,7 @@ export const StartChat = () => {
               <button
                 type="submit"
                 disabled={loading || !message.trim()}
-                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold disabled:opacity-50"
+                className="flex-1 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-base disabled:opacity-50"
               >
                 {loading ? 'Enviando...' : 'Enviar mensaje'}
               </button>
@@ -94,7 +94,7 @@ export const StartChat = () => {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-semibold"
+                className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-semibold text-base"
               >
                 Cancelar
               </button>

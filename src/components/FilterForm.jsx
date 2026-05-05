@@ -45,7 +45,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
             value={filters.brand}
             onChange={handleChange}
             placeholder="Toyota, Honda..."
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -58,7 +58,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
             value={filters.model}
             onChange={handleChange}
             placeholder="Corolla, Civic..."
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -72,7 +72,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
               value={filters.minYear}
               onChange={handleChange}
               placeholder="Desde"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="number"
@@ -80,7 +80,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
               value={filters.maxYear}
               onChange={handleChange}
               placeholder="Hasta"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
               value={filters.minPrice}
               onChange={handleChange}
               placeholder="Desde"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="number"
@@ -103,7 +103,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
               value={filters.maxPrice}
               onChange={handleChange}
               placeholder="Hasta"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
             name="status"
             value={filters.status}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="AVAILABLE">Disponible</option>
             <option value="SOLD">Vendido</option>
@@ -130,7 +130,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
             name="sort"
             value={filters.sort}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="createdAt:desc">Más recientes</option>
             <option value="price:asc">Precio: menor a mayor</option>
@@ -142,7 +142,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600"
+          className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold text-base hover:bg-blue-600"
         >
           Aplicar filtros
         </button>
@@ -150,7 +150,7 @@ export const FilterForm = ({ initialFilters, onFilterChange }) => {
         <button
           type="button"
           onClick={handleReset}
-          className="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-400"
+          className="w-full bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold text-base hover:bg-gray-400"
         >
           Limpiar filtros
         </button>

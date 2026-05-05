@@ -18,10 +18,27 @@ export const VehicleDetail = () => {
 
   const vehicle = data?.vehicle;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+  const fallbackCopy = (text) => {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyLink = () => {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).catch(() => fallbackCopy(url));
+    } else {
+      fallbackCopy(url);
+    }
   };
 
   const formatPrice = (price) => {
@@ -104,13 +121,13 @@ export const VehicleDetail = () => {
                 <>
                   <button
                     onClick={() => navigate(`/dashboard/vehicles/${vehicle.id}/edit`)}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
+                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-base transition"
                   >
                     Editar vehículo
                   </button>
                   <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold transition"
+                    className="w-full px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold text-base transition"
                   >
                     Mis vehículos
                   </button>
@@ -121,7 +138,7 @@ export const VehicleDetail = () => {
                 ) : (
                   <button
                     onClick={() => navigate('/login')}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition"
+                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-base transition"
                   >
                     Iniciar sesión para preguntar
                   </button>
@@ -130,7 +147,7 @@ export const VehicleDetail = () => {
 
               <button
                 onClick={handleCopyLink}
-                className={`w-full px-4 py-2 rounded-lg font-semibold transition ${
+                className={`w-full px-4 py-3 rounded-lg font-semibold text-base transition ${
                   copied ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
